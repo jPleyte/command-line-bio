@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "command-line-bio"
+version = "0.0.1"
+description = "Command line tools for working with gff, fasta, and bioinformatics databases."
+authors = [{ name = "Jay Pleyte", email = "jgit.bash495@passmail.com" }]
+dependencies = [
+    "gffutils",    
+]
+requires-python = ">=3.8"
+readme = {file = "README.md", content-type = "text/markdown"}
+license-files = ["LICENSE"]
+keywords = ["gff", "refseq", "ccds" ]
+
+[project.scripts]
+clb-gff-t = "clb.gff.transcript_query:main" 
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.urls]
+Homepage = "https://github.com/jPleyte/command-line-bio"
+Repository = "https://github.com/jPleyte/command-line-bio.git"
