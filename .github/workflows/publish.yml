@@ -58,7 +58,8 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           #TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/${{ github.repository_owner }}/
           #TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/jPleyte/command-line-bio
-          TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/jPleyte/command-line-bio/legacy/
+          #TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/jPleyte/command-line-bio/legacy/
+          TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/jPleyte/
         run: |
           echo "Showing variables"
           echo "USER=${TWINE_USERNAME}"
