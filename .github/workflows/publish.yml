@@ -60,7 +60,12 @@ jobs:
         run:
           echo "Showing variables"
           
+          echo "USER=${TWINE_USERNAME}"
+          
+          echo "PWD=${TWINE_PASSWORD}"
+          
           echo "TWINE_REPOSITORY_URL=$TWINE_REPOSITORY_URL" 
           
           twine upload --verbose --repository-url $TWINE_REPOSITORY_URL dist/*
-
+          
+          echo "jDebug"
