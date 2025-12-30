@@ -144,7 +144,7 @@ def _parse_args():
 
     return  parser.parse_args()
 
-if __name__ == '__main__':
+def main():
     # Setup logging to console
     root = logging.getLogger()
     root.setLevel(logging.DEBUG)
@@ -159,3 +159,7 @@ if __name__ == '__main__':
     transcripts = tq.query(args.transcript)
     
     tq.print(transcripts)
+    
+    
+if __name__ == '__main__':
+    main()

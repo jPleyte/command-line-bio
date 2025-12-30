@@ -8,7 +8,8 @@ version = "0.0.1"
 description = "Command line tools for working with gff, fasta, and bioinformatics databases."
 authors = [{ name = "Jay Pleyte", email = "jgit.bash495@passmail.com" }]
 dependencies = [
-    "gffutils",    
+    "gffutils",
+    "tabulate",    
 ]
 requires-python = ">=3.9"
 readme = {file = "README.md", content-type = "text/markdown"}
