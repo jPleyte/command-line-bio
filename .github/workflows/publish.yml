@@ -58,9 +58,5 @@ jobs:
           # secrets.PYPI_TOKEN
           TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/${{ github.repository_owner }}
-        run:
-          echo "Checking TWINE variables..." 
-          echo "TWINE_REPOSITORY_URL=$TWINE_REPOSITORY_URL" 
-          echo "TWINE_USERNAME=$TWINE_USERNAME" 
-          echo "TP=xyz${TWINE_PASSWORD}"           
-          twine upload --verbose --repository-url $TWINE_REPOSITORY_URL dist/*
+        run:           
+          twine upload --repository-url $TWINE_REPOSITORY_URL dist/*

@@ -1,6 +1,12 @@
 # command-line-bio
 Command line tools for working with gff, fasta, and bioinformatics databases. 
 
+## Installation
+
+```sh
+pip install git+https://github.com/jPleyte/command-line-bio.git
+```
+
 ## GFF Transcript Query (clb.gff.transcript_query)
 
 Retrieve information about transcripts from a gff. 
