@@ -142,6 +142,7 @@ def _parse_args():
     parser.add_argument('--gff', help='A gff that has been converted to a gff utils db', required=True, type=str)
     parser.add_argument('transcript', help='The transcript to search for in the gff (eg NM_123.1 or NP_321.2', type=str)
 
+    parser.add_argument("--version", action="version", version="clb-gff-t 0.0.2")
     return  parser.parse_args()
 
 def main():
