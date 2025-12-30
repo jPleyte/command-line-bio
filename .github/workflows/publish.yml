@@ -56,7 +56,7 @@ jobs:
         env:
           TWINE_USERNAME: ${{ github.actor }}
           TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-          TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/${{ github.repository_owner }}
+          TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/${{ github.repository_owner }}/
         run: |
           echo "Showing variables"
           echo "USER=${TWINE_USERNAME}"
