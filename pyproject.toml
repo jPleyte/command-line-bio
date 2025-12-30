@@ -10,7 +10,7 @@ authors = [{ name = "Jay Pleyte", email = "jgit.bash495@passmail.com" }]
 dependencies = [
     "gffutils",    
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 readme = {file = "README.md", content-type = "text/markdown"}
 license-files = ["LICENSE"]
 keywords = ["gff", "refseq", "ccds" ]
@@ -24,3 +24,10 @@ where = ["src"]
 [project.urls]
 Homepage = "https://github.com/jPleyte/command-line-bio"
 Repository = "https://github.com/jPleyte/command-line-bio.git"
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    # Add any other tools needed just for testing here
+]
