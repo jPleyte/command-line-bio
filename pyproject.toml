@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pleyte-command-line-bio"
+name = "command-line-bio"
 version = "0.0.6"
 description = "Command line tools for working with gff, fasta, and bioinformatics databases."
 authors = [{ name = "Jay Pleyte", email = "jgit.bash495@passmail.com" }]
