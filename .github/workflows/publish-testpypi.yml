@@ -11,8 +11,9 @@ permissions:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-    matrix:
-      python-version: ["3.9"] # later i'll add "3.10", "3.11", "3.12"]
+    strategy:
+      matrix:
+        python-version: ["3.9"] # later i'll add "3.10", "3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v4
