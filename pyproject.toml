@@ -17,7 +17,7 @@ license-files = ["LICENSE"]
 keywords = ["gff", "refseq", "ccds" ]
 
 [project.scripts]
-clb-gff-t = "clb.gff.transcript_query:main" 
+clb = "clb.main:main" 
 
 [tool.setuptools.packages.find]
 where = ["src"]

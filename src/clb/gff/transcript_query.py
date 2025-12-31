@@ -11,6 +11,7 @@ import argparse
 import gffutils
 from dataclasses import dataclass
 from tabulate import tabulate
+from gffutils.interface import FeatureDB
 
 @dataclass(frozen=True)
 class Transcript:
@@ -25,13 +26,12 @@ class TranscriptQuery(object):
     '''
     Query a gff 
     '''
-    def __init__(self, gff_db_filename):
+    def __init__(self, feature_db: FeatureDB):
         '''
         Constructor
         '''
         self._logger = logging.getLogger(__name__)
-        self._logger.info("Reading GFF database " + gff_db_filename)
-        self._gff_db = gffutils.FeatureDB(gff_db_filename)
+        self._feature_db = feature_db
 
     def query(self, transcript: str):        
         if transcript.startswith('NP'):
@@ -51,21 +51,21 @@ class TranscriptQuery(object):
                 FROM features, json_each(features.attributes, '$.protein_id')
                 WHERE json_each.value = ?
                 """
-        conn = self._gff_db.conn
+        conn = self._feature_db.conn
         params = (protein_transcript,)
         cursor = conn.execute(query, params)
         transcripts = set()
         n_rows = 0
         for row in cursor:
             n_rows += 1
-            feature = self._gff_db[row['id']]
-            parent =  self._gff_db[feature.attributes['Parent'][0]]
+            feature = self._feature_db[row['id']]
+            parent =  self._feature_db[feature.attributes['Parent'][0]]
             transcripts.add(self._get_transcript(feature, parent))
 
         self._logger.debug(f"Query for protein transcript {protein_transcript} returned {n_rows} rows  with {len(transcripts)} distinct transcripts.")
 
         if not transcripts:
-            print(f"The protein transcript {protein_transcript} was not found in this gff")
+            print(f"The protein transcript {protein_transcript} was not found")
 
         return transcripts
 
@@ -76,7 +76,7 @@ class TranscriptQuery(object):
         
         # Search mRNA features for the cdna transcript 
         nm_feature = None
-        for feature in self._gff_db.features_of_type(['mRNA']):
+        for feature in self._feature_db.features_of_type(['mRNA']):
             if 'Name' in feature.attributes and feature['Name'][0] == cdna_transcript:
                 nm_feature = feature
                 break
@@ -84,11 +84,11 @@ class TranscriptQuery(object):
         transcripts = set()
         
         if not nm_feature:
-            print(f"The cDNA transcript {cdna_transcript} was not found in this gff")
+            print(f"The cDNA transcript {cdna_transcript} was not found")
         else:
             # Search all children of the cdna feature to find the protein transcript  
             n_rows = 0
-            for cds in self._gff_db.children(nm_feature, featuretype='CDS'):
+            for cds in self._feature_db.children(nm_feature, featuretype='CDS'):
                 if 'protein_id' in cds.attributes:
                     n_rows += 1
                     transcripts.add(self._get_transcript(cds, nm_feature))
@@ -132,35 +132,3 @@ class TranscriptQuery(object):
         
         print("")    
         print(tabulate(values_matrix, headers=headers))
-        
-def _parse_args():
-    """
-    Parse command line arguments 
-    """
-    parser = argparse.ArgumentParser(description='Query a GFF')
-
-    parser.add_argument('--gff', help='A gff that has been converted to a gff utils db', required=True, type=str)
-    parser.add_argument('transcript', help='The transcript to search for in the gff (eg NM_123.1 or NP_321.2', type=str)
-
-    parser.add_argument("--version", action="version", version="clb-gff-t 0.0.2")
-    return  parser.parse_args()
-
-def main():
-    # Setup logging to console
-    root = logging.getLogger()
-    root.setLevel(logging.DEBUG)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.DEBUG)
-    root.addHandler(handler)
-    
-    args = _parse_args()
-    
-    tq = TranscriptQuery(args.gff)
-    
-    transcripts = tq.query(args.transcript)
-    
-    tq.print(transcripts)
-    
-    
-if __name__ == '__main__':
-    main()
