@@ -30,5 +30,6 @@ Repository = "https://github.com/jPleyte/command-line-bio.git"
 test = [
     "pytest",
     "pytest-cov",
+    "gffutils",
     # Add any other tools needed just for testing here
 ]
