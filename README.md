@@ -4,9 +4,11 @@ A command line tool for working with gff, fasta, and bioinformatics databases.
 
 ## Installation
 
-command-line-bio is hosted on TestPyPI, not PyPI, and is installed by running:
+You can find the latest test release of command-line-bio on TestPyPI: https://test.pypi.org/project/command-line-bio/
+
+To install from TestPyPI run
   
-```sh
+```bash
 pip install --index-url https://test.pypi.org/simple/ \
             --extra-index-url https://pypi.org/simple/ \
             command-line-bio
@@ -21,7 +23,7 @@ Retrieve information about transcripts from a gff.
 Before you can query a gff you must first convert it to an SQLite database. This process takes a few minutes but only needs to be done once. 
   
 ```bash
-$ clb gff createdb --gff /opt/GRCh37_latest_genomic.gff.gz --db /opt/GRCh37_latest_genomic.gff
+$ clb gff createdb --gff /opt/GRCh37_latest_genomic.gff.gz --db /opt/GRCh37_latest_genomic.gff.db
 
 Created /opt/GRCh37_latest_genomic.gff from /opt/GRCh37_latest_genomic.gff.gz
 ```
@@ -32,26 +34,45 @@ Lookup a cDNA transcript
 ```text
 $ clb gff query --db /opt/GRCh37_latest_genomic.gff.db NM_001290187.2
 
-Query for cDNA transcript NM_001290187.2 returned 18 rows with 1 distinct transcript
-
 Chromosome    cDNA            Protein         CCDS         Gene    Strand
 ------------  --------------  --------------  -----------  ------  --------
 NC_000007.13  NM_001290187.2  NP_001277116.1  CCDS78285.1  KRBA1   +
 ```
 
+Include exon positions by adding the ``--exons`` flag
+
+```text
+$ clb gff query --db /opt/GRCh37_latest_genomic.gff.db NM_000546.6 --exons
+
+Chromosome    cDNA         Protein      CCDS         Gene    Strand
+------------  -----------  -----------  -----------  ------  --------
+NC_000017.10  NM_000546.6  NP_000537.3  CCDS11118.1  TP53    -
+
+  Exon    Start      End
+------  -------  -------
+     1  7579839  7579912
+     2  7579700  7579721
+     3  7579312  7579590
+     4  7578371  7578554
+     5  7578177  7578289
+     6  7577499  7577608
+     7  7577019  7577155
+     8  7576853  7576926
+     9  7573927  7574033
+    10  7572927  7573008
+```
 
 Lookup a protein transcript
 
 ```text
 $ clb gff query --db /opt/GRCh37_latest_genomic.gff.db NP_001034792.4
 
-Query for protein transcript NP_001034792.4 returned 172 rows  with 2 distinct transcripts.
-
 Chromosome      cDNA            Protein         CCDS    Gene    Strand
 --------------  --------------  --------------  ------  ------  --------
 NC_000001.10    NM_001039703.6  NP_001034792.4          NBPF10  +
 NW_003871055.3  NM_001039703.6  NP_001034792.4          NBPF10  -
 ```
+
 
 ## Reference Query
 

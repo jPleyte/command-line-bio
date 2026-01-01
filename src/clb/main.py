@@ -39,6 +39,10 @@ def _query_gff_db(args):
         transcripts = tq.query(args.transcript)
         if transcripts: 
             tq.print(transcripts)
+        
+        if transcripts and args.exons:
+            tq.print_exons(transcripts[0].exons, transcripts[0].strand == '+')
+        
     
 def _parse_args():
     """
@@ -64,6 +68,7 @@ def _parse_args():
     query_gff_parser = gff_subparsers.add_parser("query", help="Query gff")
     query_gff_parser.set_defaults(func=lambda args: _query_gff_db(args))
     query_gff_parser.add_argument("--db", help="GFF Database file", required=True)
+    query_gff_parser.add_argument("--exons", help="Show exons", required=False, action='store_true')
     query_gff_parser.add_argument("transcript", help="Transcript to lookup (eg NM_123.1 or NP_333.3)")
     
     # reference operations

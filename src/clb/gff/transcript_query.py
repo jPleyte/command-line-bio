@@ -6,21 +6,20 @@ Created on Dec 17, 2025
 @author: pleyte
 '''
 import logging
-import sys
-import argparse
 import gffutils
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from tabulate import tabulate
 from gffutils.interface import FeatureDB
 
-@dataclass(frozen=True)
+@dataclass
 class Transcript:
     chrom: str
     cdna_transcript: str
-    protein_transcript: str
-    ccds: str
     gene: str    
     strand: str
+    protein_transcript: str = None
+    ccds: str = None
+    exons: list = field(default_factory=list)
         
 class TranscriptQuery(object):
     '''
@@ -73,7 +72,6 @@ class TranscriptQuery(object):
         '''
         Query the gff for the protein transcript associated with the cDNA transcript 
         '''
-        
         # Search mRNA features for the cdna transcript 
         nm_feature = None
         for feature in self._feature_db.features_of_type(['mRNA']):
@@ -81,34 +79,31 @@ class TranscriptQuery(object):
                 nm_feature = feature
                 break
         
-        transcripts = set()
-        
         if not nm_feature:
             print(f"The cDNA transcript {cdna_transcript} was not found")
+            return []
         else:
             # Search all children of the cdna feature to find the protein transcript  
             n_rows = 0
+            
+            transcript = Transcript(nm_feature.chrom, 
+                                    nm_feature.attributes['Name'][0],
+                                    nm_feature.attributes['gene'][0],
+                                    nm_feature.strand)
+            
             for cds in self._feature_db.children(nm_feature, featuretype='CDS'):
-                if 'protein_id' in cds.attributes:
-                    n_rows += 1
-                    transcripts.add(self._get_transcript(cds, nm_feature))
+                n_rows += 1
+                transcript.exons.append((cds.start, cds.end))
 
-            self._logger.debug(f"Query for cDNA transcript {cdna_transcript} returned {n_rows} rows with {len(transcripts)} distinct transcript")
-        
-        return transcripts
+                if 'protein_id' in cds.attributes and transcript.protein_transcript is None:
+                    transcript.protein_transcript = cds.attributes['Name'][0]
+
+                if transcript.ccds is None:
+                    transcript.ccds = self._get_ccds_accession(cds['Dbxref'])
+                    
+            self._logger.debug(f"Query for cDNA transcript {cdna_transcript} returned {n_rows} rows")
+            return [transcript]
             
-            
-    def _get_transcript(self, child_feature: gffutils.feature.Feature, parent_feature: gffutils.feature.Feature):
-        '''
-        '''
-        ccds = self._get_ccds_accession(child_feature['Dbxref'])
-        return Transcript(parent_feature.chrom, 
-                          parent_feature.attributes['Name'][0], 
-                          child_feature.attributes['Name'][0], 
-                          ccds,
-                          parent_feature.attributes['gene'][0], 
-                          parent_feature.strand)
-    
     def _get_ccds_accession(self, dbxrefs: list[str]):
         """
         Given a list of ids with the format "TYPE:ID" (eg CCDS:CCDS123.1) find the one with the prefix CCDS and return the id. 
@@ -131,4 +126,17 @@ class TranscriptQuery(object):
             values_matrix.append(row)
         
         print("")    
+        print(tabulate(values_matrix, headers=headers))
+        
+    def print_exons(self, exons: list[tuple], is_positive_strand):
+        """
+        """
+        headers = [ 'Exon', 'Start', 'End' ]
+        values_matrix = []
+        n = 0
+        for start, end in (sorted(exons) if is_positive_strand else sorted(exons, reverse=True)):            
+            n += 1
+            values_matrix.append([n, start, end])
+        
+        print("")
         print(tabulate(values_matrix, headers=headers))
